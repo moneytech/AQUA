@@ -37,6 +37,10 @@ OBJS = \
 	obj/kernel_asm.o \
 	obj/kernel.o \
 	\
+	obj/paging_asm.o \
+	obj/interrupts_asm.o \
+	obj/descriptor_tables_asm.o \
+	\
 	obj/dawn/dawn.o \
 	\
 	obj/OS.o \
@@ -139,6 +143,15 @@ kernel.bin: src/link.ld $(OBJS)
 
 obj/kernel_asm.o: asm/kernel.asm
 	$(ASSEMBLER) $(ASMFLAGS) -o obj/kernel_asm.o asm/kernel.asm
+	
+obj/paging_asm.o: asm/paging.asm
+	$(ASSEMBLER) $(ASMFLAGS) -o obj/paging_asm.o asm/paging.asm
+	
+obj/interrupts_asm.o: asm/interrupts.asm
+	$(ASSEMBLER) $(ASMFLAGS) -o obj/interrupts_asm.o asm/interrupts.asm
+	
+obj/descriptor_tables_asm.o: asm/descriptor_tables.asm
+	$(ASSEMBLER) $(ASMFLAGS) -o obj/descriptor_tables_asm.o asm/descriptor_tables.asm
 
 obj/%.o: final/%.c
 	mkdir -p $(@D)
