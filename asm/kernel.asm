@@ -53,7 +53,7 @@ section .text
 	dd 0
 	dd 0
 
-	dd 0;0
+	dd 1;0
 	dd 800;800
 	dd 600;600
 	dd 32;32
@@ -106,10 +106,10 @@ section .text
 
 	global load_page_dir
 	load_page_dir:
-		push dword [ebp + 8]
+		push ebp
 
 		mov ebp, esp
-		mov eax, esp
+		mov eax, [esp + 8]
 
 		mov cr3, eax
 		mov esp, ebp
