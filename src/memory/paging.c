@@ -42,41 +42,29 @@ void blank_pages(void) {
 	
 }
 
-void map_kernel(vaddr from, int _size) {
-	//uint32* page_table = &first_page_table;
+void map_page(uint32 physical_address, uint32 virtual_address, int _size) {
+	uint32 page_directory_index = virtual_address >> 22 & 0x3FF;
+	uint32 page_table_index = virtual_address >> 11 & 0x3FF;
 	
-	from = from & 0xfffff000;
-	for(; _size > 0; from += 4096 , _size -= 4096, &first_page_table[0]++){
-		*first_page_table = from | 1;
+	uint32* _page_table = page_directory[page_directory_index];
+	
+	int i;
+	for (i = 0; i < _size; i++) {
+		_page_table[page_table_index + i] = physical_address + (i * 0x1000) | 3;
 		
 	}
 	
-}
-
-void* get_phys_address(void* virtual_address) {
-	uint64 page_directory_index = (uint64) virtual_address >> 22;
-	uint64 page_table_index = (uint64) virtual_address >> 12 & 0x03FF;
-	
-	uint64* _page_directory = (uint64*) 0xFFFFF000;
-	uint64* _page_table = ((uint64*) 0xFFC00000) + (0x400 * page_directory_index);
-	
-	return (void*) ((_page_table[page_table_index] & ~0xFFF) + ((uint64) virtual_address & 0xFFF));
+	flush_tlb(virtual_address);
 	
 }
 
-void map_page(void* phys_address, void* virtual_address, uint32 flags) {
-	uint64 page_directory_index = (uint64) virtual_address >> 22;
-	uint64 page_table_index = (uint64) virtual_address >> 12 & 0x03FF;
-	
-	uint64* _page_directory = (uint64*) 0xFFFFF000;
-	uint64* _page_table = ((uint64*) 0xFFC00000) + (0x400 * page_directory_index);
-	
-	_page_table[page_table_index] = ((uint64) phys_address) | (flags & 0xFFF) | 0x01;
+inline void flush_tlb(uint32 address) {
+	asm volatile("invlpg (%0)" :: "r" (address) : "memory");
 	
 }
 
 void page_fault(void) {
-	println("FAULT!!!!!!!", 0x3e);
+	while (TRUE) println("FAULT!!!!!!!", 0x3e);
 	
 }
 

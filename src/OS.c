@@ -309,12 +309,14 @@ void OS_run(\
 	println("Memory management: Enabling paging ...", 0x0f);
 	
 	blank_pages();
-	
-	map_kernel(0x00000000, 4096);
+	map_page(0x00000000, 0x80000000, 0x100000);
 	
 	init_paging();
-	print("Hello paging world...", 0x18);
-	sleep(50);
+	uint32* ptr = (uint32*) 0x800000000;
+	uint32 fault = *ptr;
+	
+	//print("Hello paging world...", 0x18);
+	//sleep(50);
 	
 	//enter_user_space();
 	

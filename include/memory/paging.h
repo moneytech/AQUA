@@ -21,9 +21,6 @@
  * 
  */
 
-//http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html
-//http://www.jamesmolloy.co.uk/tutorial_html/9.-Multitasking.html
-//http://www.jamesmolloy.co.uk/tutorial_html/10.-User%20Mode.html
 
 #ifndef PAGING_H
 	#define PAGING_H
@@ -35,7 +32,7 @@
 	#include "../interrupts/irq.h"
 	
 	void blank_pages(void);
-	void map_kernel(vaddr from, int _size);
+	void map_page(uint32 physical_address, uint32 virtual_address, int _size);
 	void init_paging(void);
 	
 #endif
