@@ -34,6 +34,8 @@
 	#include "../interrupts/isr.h"
 	#include "../interrupts/irq.h"
 	
+	void blank_pages(void);
+	void map_kernel(vaddr from, int _size);
 	void init_paging(void);
 	
 #endif

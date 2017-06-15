@@ -50,6 +50,7 @@
 	typedef signed int* intptr;
 	typedef unsigned int* uintptr_t;
 	typedef uint16 size;
+	typedef uint64 vaddr;
 	
 	#define low_16(address) (uint16) ((address) & 0xFFFF)            
 	#define high_16(address) (uint16) (((address) >> 16) & 0xFFFF)

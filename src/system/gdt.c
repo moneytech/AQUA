@@ -28,6 +28,14 @@ GDT_pointer gdt_ptr;
 
 extern void gdt_flush(void);
 
+/*void create_descriptor(uint32 base, uint32 limit, uint16 flag) {
+	uint64 descriptor;
+	
+	descriptor = limit & 0x000F0000;
+	descriptor |= (flag << 8)
+	
+}*/
+
 void gdt_set_gate(uint32 num, uint16 limit, uint32 base, uint8 access, uint8 granularity) {
 	gdt[num].base_low = (base & 0xFFFF);
 	gdt[num].base_middle = (base >> 16) & 0xFF;

@@ -307,6 +307,11 @@ void OS_run(\
 	isr_install();
 	
 	println("Memory management: Enabling paging ...", 0x0f);
+	
+	blank_pages();
+	
+	map_kernel(0x00000000, 4096);
+	
 	init_paging();
 	print("Hello paging world...", 0x18);
 	sleep(50);
