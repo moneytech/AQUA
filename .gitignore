@@ -3,8 +3,8 @@
 !.git*
 
 #misc
-.log
-.yml
+*.log
+*.yml
 
 # binaries
 *.o
