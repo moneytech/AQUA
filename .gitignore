@@ -2,6 +2,10 @@
 .*
 !.git*
 
+#misc
+.log
+.yml
+
 # binaries
 *.o
 *.bin
