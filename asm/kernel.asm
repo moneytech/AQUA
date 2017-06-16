@@ -19,8 +19,6 @@
 ;
 ;
 
-; TODO: move this to src/
-
 	bits 32
 
 KERNEL_VIRTUAL_BASE equ 0xC0000000
@@ -53,7 +51,7 @@ section .text
 	dd 0
 	dd 0
 
-	dd 1;0
+	dd 0;0
 	dd 800;800
 	dd 600;600
 	dd 32;32
@@ -63,32 +61,21 @@ section .text
 
 	global start
 	start:
-		cli
-
-		mov ecx, (boot_page_directory - KERNEL_VIRTUAL_BASE)
-		mov cr3, ecx
-
-		mov ecx, cr4
-		or ecx, 0x00000010
-		mov cr4, ecx
-		
-		;mov ecx, cr0
-		;or ecx, 0x80000000
-		;mov cr0, ecx
+		;mov ecx, (boot_page_directory - KERNEL_VIRTUAL_BASE)
 		
 		lea ecx, [start_hh]
 		jmp ecx
 
 	start_hh:
-		mov dword [boot_page_directory], 0
-		invlpg [0]
-
+		;mov dword [boot_page_directory], 0
+		;invlpg [0]
+		
 		mov esp, stack + 0x4000
-		call call_constructors
+		;call call_constructors
 
 		push dword ebx
 		push dword eax
-
+		;hlt
 		call main
 
 		mov eax, 1

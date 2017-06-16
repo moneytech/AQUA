@@ -23,7 +23,7 @@
 
 #include "gdt.h"
 
-static GDT_entry gdt[GDT_ENTRIES];
+GDT_entry gdt[GDT_ENTRIES];
 GDT_pointer gdt_ptr;
 
 extern void gdt_flush(void);

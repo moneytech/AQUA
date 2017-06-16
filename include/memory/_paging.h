@@ -1,5 +1,5 @@
 /*
- * link.ld
+ * paging.h
  * 
  * Copyright 2017 Obiwac
  * 
@@ -22,34 +22,18 @@
  */
 
 
-ENTRY(start)
-OUTPUT_FORMAT(elf32-i386)
-OUTPUT_ARCH(i386:i386)
-
-SECTIONS {
-	/*. = 0xC0100000;
-	krnlstart = .;*/
+#ifndef PAGING_H
+	#define PAGING_H
 	
-	. = 0x100000; /*to be commented*/
-	.text : /*AT(ADDR(.text) - 0xC0000000)*/ {*(.text)}
+	#include "../types.h"
+	#include "../screen.h"
 	
-	.data : /*AT(ADDR(.data) - 0xC0000000)*/ {
-		start_ctors = .;
-		KEEP(*(.init_array));
-		KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*)));
-		end_ctors = .;
-		*(.data)
-		
-	}
+	#include "../interrupts/isr.h"
+	#include "../interrupts/irq.h"
 	
-	.bss : /*AT(ADDR(.bss) - 0xC0000000)*/ {
-		/**(.COMMON)*/
-		*(.bss)
-		
-	}
+	void blank_pages(void);
+	void map_page(uint32 physical_address, uint32 virtual_address, int _size);
+	void identity_paging(uint32 from, int _size);
+	void init_paging(void);
 	
-	/*krnlend = .;*/
-	end = .; _end = .; __end = .;
-	/DISCARD/ : {*(.fini_array*) *(.comment)}
-	
-}
+#endif

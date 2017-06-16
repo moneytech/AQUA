@@ -24,53 +24,88 @@
 
 #include "paging.h"
 
+extern long kstart;
+extern long kend;
 extern void load_page_dir(uint32*);
-extern void enable_paging(void);
 
-uint32 page_directory[1024] __attribute__((aligned(0x1000)));
-uint32 first_page_table[1024] __attribute__((aligned(0x1000)));
+uint32 page_directory[1024] __attribute__((aligned(4096)));
+uint32 exec_page_table[1024] __attribute__((aligned(4096)));
 
-void blank_pages(void) {
-	int i;
-	for (i = 0; i < 1024; i++) {
-		page_directory[i] = 0x00000002;
-		first_page_table[i] = (i * 0x1000) | 3;
+#define kernel_start_phys = &krnlstart - HIGHER_HALF
+#define kernel_end_phys = &krnlend - HIGHER_HALF
+
+extern uint32 boot_page_directory;
+
+void setup_paging(void) {
+	page_directory[0] = 0x83;
+	//asm("hlt");
+	
+	uint32 i;
+	for (i = 1; i < (HIGHER_HALF >> 22); i++) {
+		page_directory[i] = 0x0;
 		
 	}
 	
-	page_directory[0] = ((uint32) first_page_table) | 3;
+	page_directory[i] = 0x83;
+	i++;
 	
-}
-
-void map_page(uint32 physical_address, uint32 virtual_address, int _size) {
-	uint32 page_directory_index = virtual_address >> 22 & 0x3FF;
-	uint32 page_table_index = virtual_address >> 11 & 0x3FF;
-	
-	uint32* _page_table = page_directory[page_directory_index];
-	
-	int i;
-	for (i = 0; i < _size; i++) {
-		_page_table[page_table_index + i] = physical_address + (i * 0x1000) | 3;
+	for (i = i; i < 1024; i++) {
+		page_directory[i] = 0;
 		
 	}
 	
-	flush_tlb(virtual_address);
+	uint32* d = (uint32*) 0x1000;
+	load_page_dir((uint32*) ((uint32) &page_directory[0] - HIGHER_HALF));
 	
 }
 
-inline void flush_tlb(uint32 address) {
-	asm volatile("invlpg (%0)" :: "r" (address) : "memory");
+void exec(uint8* program) {
+	exec_page_table[0] = ((uint32) &program[0] - HIGHER_HALF) | 0x3;
+	page_directory[0] = ((uint32) &exec_page_table[0] - HIGHER_HALF) | 0x3;
+	
+	load_page_dir((uint32*) ((uint32) &page_directory[0] - HIGHER_HALF));
+	((void(*)())0)();
+	
+	exec_page_table[0] = 0x83;
+	load_page_dir((uint32*) ((uint32) &page_directory[0] - HIGHER_HALF));
 	
 }
 
-void page_fault(void) {
-	while (TRUE) println("FAULT!!!!!!!", 0x3e);
+void page_fault_handler(struct registers* r) {
+	asm volatile("cli");
 	
-}
-
-void init_paging(void) {
-	irq_add_handler(14, page_fault);
-	load_page_dir(page_directory);
-	enable_paging();
+	boolean other = FALSE;
+	switch (r->err_code) {
+		case 0:
+		case 1: {
+			println("Kernel reading in nonpaged area.", 0x06);
+			break;
+			
+		} case 2:
+		case 3: {
+			println("Kernel writing in nonpaged area.", 0x06);
+			break;
+			
+		} case 4:
+		case 5: {
+			println("User reading in nonpaged area.", 0x06);
+			break;
+			
+		} case 6:
+		case 7: {
+			println("User writing in nonpaged area.", 0x06);
+			break;
+			
+		} default: {
+			println("Unknown page fault.", 0x06);
+			other = TRUE;
+			break;
+			
+		}
+		
+	}
+	
+	//print_regs(r);
+	while (TRUE);
 	
 }

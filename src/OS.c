@@ -168,6 +168,10 @@ void OS_run(\
 	uint8* icon_load \
 	\
 ) {
+	//asm volatile("hlt");
+	//load_gdt();
+	//setup_paging();
+	
 	//clear_screen();
 	println("GRUB: Booting on Secondary Master ...", 0x0f);
 	
@@ -307,18 +311,7 @@ void OS_run(\
 	isr_install();
 	
 	println("Memory management: Enabling paging ...", 0x0f);
-	
-	blank_pages();
-	map_page(0x00000000, 0x80000000, 0x100000);
-	
-	init_paging();
-	uint32* ptr = (uint32*) 0x800000000;
-	uint32 fault = *ptr;
-	
-	//print("Hello paging world...", 0x18);
-	//sleep(50);
-	
-	//enter_user_space();
+	//setup_paging();
 	
 	println("Memory management: Initializing heap ...", 0x0f);
 	init_heap();
@@ -478,8 +471,8 @@ void OS_run(\
 	init_sleep(font_aqua_50px_l, font_aqua_50px);
 	//init_slide(font_aqua_20px_l, font_aqua_20px, font_aqua_50px_l, font_aqua_50px);
 	
-	println("ATA: Setting up Advanced Technoligy Attachment at 0x1F0 ...", 0x0f);
-	ata_setup(FALSE, 0x1F0);
+	println("ATA: Setting up Advanced Technoligy Attachment at master 0x1F0 ...", 0x0f);
+	ata_setup(TRUE, 0x1F0);
 	
 	println("ATA: Identifying ...", 0x0f);
 	//identify();

@@ -21,7 +21,6 @@
  *
  */
 
-/* TODO: move this to src/ */
 #include "../include/multiboot.h"
 
 #include "../include/types.h"
@@ -30,36 +29,40 @@
 #include "../include/OS.h"
 #include "../include/graphics/GFX_loader.h"
 
-#define drive 0
+//typedef void (*constructor) ();
 
-#define CHECK_FLAG(flags, bit) ((flags) & (1 << (bit)))
-
-typedef void (*constructor) ();
-
-extern constructor start_ctors;
-extern constructor end_ctors;
-
+//extern constructor start_ctors;
+//extern constructor end_ctors;
+/*
 extern void call_constructors(void) {
 	constructor* i;
 	for (i = &start_ctors; i != &end_ctors; i++) {
 		(*i)();
-
+		
 	}
-
-}
+	
+}*/
 
 extern void main(unsigned long magic, unsigned long addr) {
-	uint8 terminal_colour = 0x02;
-
-	/*if (drive) {
-		print("Setting up Advanced Technoligy Attachment (Primary Master) enviroment.\n", terminal_colour);
-		ata_setup(1, 0x1F0);
-
-		print("Identifying Advanced Technoligy Attachment (Primary Master): \n", terminal_colour);
-		identify();
-
-	}*/
-
+	/*load_gdt();
+	asm volatile("hlt");
+	
+	uint8* wallpaper0;
+	uint8* wallpaper2;
+	uint8* wallpaper5;
+	uint8* wallpaper7;
+	uint8** font_aqua_15px;
+	uint8** font_aqua_20px;
+	uint8** font_aqua_50px;
+	uint8** font_mono_15px;
+	uint8* icon_off;
+	uint8* icon_back;
+	uint8* icon_next;
+	uint8* icon_edit;
+	uint8* icon_circle;
+	uint8* icon_save;
+	uint8* icon_load;*/
+	
 	OS_run(\
 		magic, \
 		addr, \
@@ -88,5 +91,5 @@ extern void main(unsigned long magic, unsigned long addr) {
 		icon_load \
 		\
 	);
-
+	
 }

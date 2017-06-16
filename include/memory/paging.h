@@ -27,12 +27,10 @@
 	
 	#include "../types.h"
 	#include "../screen.h"
-	
 	#include "../interrupts/isr.h"
-	#include "../interrupts/irq.h"
 	
-	void blank_pages(void);
-	void map_page(uint32 physical_address, uint32 virtual_address, int _size);
-	void init_paging(void);
+	void setup_paging(void);
+	void page_fault_handler(struct registers* r);
+	void exec(uint8* program);
 	
 #endif
