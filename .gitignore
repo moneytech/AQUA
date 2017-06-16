@@ -4,7 +4,7 @@
 
 #misc
 *.log
-*.yml
+*.txt
 
 # binaries
 *.o
