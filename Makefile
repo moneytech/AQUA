@@ -53,6 +53,8 @@ OBJS = \
 	obj/utils/endian.o \
 	obj/utils/bubble_sort.o \
 	\
+	obj/cpu/fpu.o \
+	\
 	obj/system/gdt.o \
 	obj/system/system.o \
 	\
@@ -61,6 +63,8 @@ OBJS = \
 	\
 	obj/specs/settings.o \
 	obj/specs/RAM_count.o \
+	\
+	obj/html/parser.o \
 	\
 	obj/user/sleep.o \
 	obj/user/cursor_task.o \
@@ -80,6 +84,8 @@ OBJS = \
 	\
 	obj/graphics/effects/graphics_blurring.o \
 	\
+	obj/graphics/aqua3d/main.o \
+	\
 	obj/drivers/PIT_driver.o \
 	obj/drivers/ATA_driver.o \
 	obj/drivers/CMOS_driver.o \
@@ -95,6 +101,10 @@ OBJS = \
 	\
 	obj/interrupts/pic.o \
 	obj/interrupts/nmi.o \
+	\
+	obj/networking/network_wrapper.o \
+	\
+	obj/networking/cards/AMD_AM79C973_driver.o \
 	\
 	obj/drivers/mouse_driver.o \
 	obj/drivers/keyboard_driver.o \
@@ -115,6 +125,19 @@ OBJS = \
 	\
 	obj/user/applications/application_my_notes.o \
 	\
+
+#obj/graphics/aqua3d/float.o \
+#	obj/graphics/aqua3d/colour.o \
+#	\
+#	obj/graphics/aqua3d/vector.o \
+#	obj/graphics/aqua3d/matrix.o \
+#	\
+#	obj/graphics/aqua3d/mesh.o \
+#	obj/graphics/aqua3d/batch.o \
+#	\
+#	obj/graphics/aqua3d/camera.o \
+#	obj/graphics/aqua3d/renderer.o \
+#	\
 
 OUTPUT = aqua/boot/kernel.bin
 

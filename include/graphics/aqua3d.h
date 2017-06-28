@@ -80,6 +80,78 @@
 		
 	} gl_edge_t;
 	
+	#define OBSIDIAN_COMMAND_ADD_POINT 1
+	#define OBSIDIAN_COMMAND_EDIT_POINT 2
+	
+	typedef struct {
+		uint16 command;
+		int id;
+		
+		gl_pos_t position;
+		gl_colour_t colour;
+		
+	} obsidian_command;
+	
+	typedef struct {
+		gl_camera_t camera;
+		obsidian_command* commands;
+		int command_count;
+		
+	} obsidian_frame;
+	
+	typedef struct {
+		uint32 width;
+		uint32 height;
+		
+		uint16 fps;
+		gl_colour_t clear_colour;
+		
+		boolean render_points;
+		boolean render_edges;
+		boolean render_faces;
+		
+		boolean render_fog;
+		boolean render_bloom;
+		boolean render_billboards;
+		
+		boolean depth_test;
+		
+		gl_float_t fog_start;
+		gl_float_t fog_end;
+		uint32 fog_colour;
+		
+		uint32 bloom_radius;
+		
+		uint32 billboard_size;
+		uint8 billboard_alpha;
+		
+	} obsidian_scene;
+	
+	typedef struct {
+		obsidian_frame* frames;
+		int frame_count;
+		
+	} obsidian_recorder;
+	
+	typedef struct {
+		uint32 width;
+		uint32 height;
+		uint16 fps;
+		
+		uint32 frames;
+		uint8** video;
+		
+	} obsidian_final_render;
+	
+	void gl_set_obsidian(obsidian_scene scene);
+	obsidian_scene gl_get_obsidian(void);
+	void gl_new_obsidian(void);
+	
+	void obsidian_record(boolean state);
+	obsidian_final_render obsidian_render(void);
+	void obsidian_loop(void);
+	
+	void gl_set_screen_mode(uint32 _width, uint32 _height);
 	void gl_init(int bytes);
 	void gl_destroy(void);
 	

@@ -170,7 +170,9 @@ void OS_run(\
 ) {
 	//asm volatile("hlt");
 	//load_gdt();
+	//isr_install();
 	//setup_paging();
+	//asm("hlt");
 	
 	//clear_screen();
 	println("GRUB: Booting on Secondary Master ...", 0x0f);
@@ -318,6 +320,13 @@ void OS_run(\
 	
 	println("Loading the loading screen ...", 0x07);
 	
+	/*int pen;
+	for (pen = 0; pen < 360; pen += 10) {
+		println(itoa(cos(pen) * 1000), 0x4e);
+		sleep(1);
+	}
+	sleep(50);*/
+	
 	string temp = "AQUA";
 	
 	uint32 hex;
@@ -351,24 +360,63 @@ void OS_run(\
 	println((string) itoa(compile_time_string()), 0x0f);
 	rand_seed(compile_time_string());
 	
+	println("\nPCI: Scanning for devices ...", 0x0f);
+	PCI_debug();
+	
+	println("Initializing network wrapper ...", 0x0f);
+	boolean networking = networking_get_card();
+	uint64 MAC_address;
+	uint32 IP_address;
+	
 	println("Initializing mouse cursor ...", 0x0f);
 	init_cursor(buffer_blit);
 	
-	println("Interrupts: Installing PIT handler on IRQ0 ...", 0x0f);
+	//println("Interrupts: Installing syscall handler on IRQ ...", 0x0f);
+	//syscall_install();
+	
+	println("\nInterrupts: Installing PIT handler on IRQ0 ...", 0x0f);
 	
 	if (IRQ) {
 		timer_install(buffer_blit);
-		
-		if (buffer_blit) timer_phase(100000000);
-		else timer_phase(15);
+		timer_phase(60);
 		
 	}
+	
+	println("Interrupts: Installing FPU handler on IRQ7 ...", 0x0f);
+	//fpu_init();
+	//fpu_install();
 	
 	println("Interrupts: Installing keyboard handler on IRQ1 ...", 0x0f);
 	keyboard_install(IRQ);
 	
 	println("Interrupts: Installing mouse handler on IRQ12 ...", 0x0f);
 	if (IRQ) mouse_install();
+	
+	if (networking) {
+		println("Networking: Installing network card ...", 0x0f);
+		//print(itoa(networking_get_PCI_device().interrupt), 0x0f);
+		//println(" ...", 0x0f);
+		networking_install();
+		networking_activate();
+		
+		MAC_address = networking_get_MAC_address();
+		IP_address = networking_get_IP_address();
+		
+		print("\tMAC address is ", 0x07);
+		print_hex(MAC_address & 0xFF, 0x07);
+		print_hex((MAC_address >> 8) & 0xFF, 0x07);
+		print_hex((MAC_address >> 16) & 0xFF, 0x07);
+		print_hex((MAC_address >> 24) & 0xFF, 0x07);
+		print_hex((MAC_address >> 32) & 0xFF, 0x07);
+		print_hex((MAC_address >> 40) & 0xFF, 0x07);
+		println(".", 0x07);
+		
+		print("\tIP address is ", 0x07);
+		print_hex(IP_address & 0xFF, 0x07);
+		print_hex((IP_address >> 8) & 0xFF, 0x07);
+		println(".", 0x07);
+		
+	}
 	
 	if (IRQ) {
 		println("Interrupts: Initializing IRQs ...", 0x0f);
@@ -379,15 +427,22 @@ void OS_run(\
 		
 	}
 	
+	if (networking) {
+		println("\nNetworking: Activating network card ...", 0x0f);
+		networking_activate();
+		networking_analyse_status();
+		
+		amd_am79c973_send((uint8*) "Hello network", 13);
+		networking_analyse_status();
+		
+	}
+	
 	println("\nSerial: Making sure serial port is est to COM1 ...", 0x0f);
 	set_serial_port(COM1);
 	print_hex(COM1, 0x0f);
 	
 	println("\nSerial: Initializing serial port ...", 0x0f);
 	init_serial();
-	
-	println("PCI: Scanning for devices ...", 0x0f);
-	PCI_debug();
 	
 	println("Detecting RAM ...", 0x0f);
 	
@@ -467,6 +522,27 @@ void OS_run(\
 		\
 	);
 	
+	println("Passing necessary rescorces to HTML parser ...", 0x0f);
+	
+	init_html_parser(
+		font_aqua_15px, \
+		font_aqua_20px, \
+		font_aqua_50px \
+		\
+	);
+	
+	#include "left_game.h"
+	left_game();
+	
+	/*html_page page = html_new_page(800, 600);
+	page = html_parse_code(page, "<html><head><title>WEBPAGE</title></head><body><h1>Header</h1><p>This is just a paragraph <b>bold</b> <u>underlined</u></p></body></html>");
+	page = html_render_page(page);
+	html_display_page(0, 0, page);
+	*/
+	sleep(50);
+	
+	//launch_application_lasergame();
+	
 	println("Passing necessary rescorces to all the other small desktops ...", 0x0f);
 	init_sleep(font_aqua_50px_l, font_aqua_50px);
 	//init_slide(font_aqua_20px_l, font_aqua_20px, font_aqua_50px_l, font_aqua_50px);
@@ -489,7 +565,7 @@ void OS_run(\
 	lock_drive = init_fs();
 	
 	if (lock_drive) {
-		println("\tFS WARNING: File system is not correctly formatted. Locking drive ...", 0x06);
+		println("\tFS WARNING: File system is not correctly formatted. Launching startup wizard ...", 0x06);
 		
 		enter_start_wizard();
 		launch_application("Settings");

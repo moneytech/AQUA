@@ -100,13 +100,13 @@ void new_line_check(void) {
 void printch(char c, char colour) {
 	string vidmem = (string) 0xb8000;
 	
-	write_serial(c);
+	//write_serial(c);
 	log[log_length] = c;
 	log_colours[log_length] = colour;
 	log_length++;
 	
 	switch (c) {
-		case (0x08): {
+		case 0x08: {
 			if (cursor_x > 0) {
 				cursor_x--;
 				vidmem[(cursor_y * screen_width + cursor_x) * screen_depth] = 0x00;
@@ -115,15 +115,15 @@ void printch(char c, char colour) {
 			
 			break;
 			
-		} case (0x09): {
+		} case 0x09: {
 			cursor_x = (cursor_x + 8) & ~(8 - 1);
 			break;
 			
-		} case ('\r'): {
+		} case '\r': {
 			cursor_x = 0;
 			break;
 			
-		} case ('\n'): {
+		} case '\n': {
 			cursor_x = 0;
 			cursor_y++;
 			

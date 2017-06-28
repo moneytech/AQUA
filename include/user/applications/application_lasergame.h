@@ -25,6 +25,7 @@
 	#define APPLICATION_LASERGAME_H
 	
 	#include "api.h"
+	#include "../../graphics/GFX.h"
 	#include "../../graphics/aqua3d.h"
 	#include "../../utils/bubble_sort.h"
 	

@@ -24,8 +24,8 @@
 
 #include "aqua3d.h"
 
-static uint32 width;
-static uint32 height;
+static uint32 width = 0;
+static uint32 height = 0;
 
 static uint32 cx;
 static uint32 cy;
@@ -62,12 +62,125 @@ static uint32 bloom_radius;
 static uint32 billboard_size;
 static uint8 billboard_alpha;
 
-void gl_init(int bytes) { // one point is 12 bytes
-	width = GFX_get_mode_info('w');
-	height = GFX_get_mode_info('h');
+static boolean obsidian_recording;
+static obsidian_scene obsidian;
+static obsidian_recorder recorder;
+
+static obsidian_command* command_stack;
+static int command_count;
+
+static int obsidian_pid;
+
+void gl_set_obsidian(obsidian_scene scene) {
+	obsidian = scene;
+	
+}
+
+obsidian_scene gl_get_obsidian(void) {
+	return obsidian;
+	
+}
+
+void gl_new_obsidian(void) {
+	obsidian.fps = 30;
+	obsidian.bloom_radius = 2;
+	obsidian.clear_colour = 0x00000000;
+	
+}
+
+void obsidian_record(boolean state) {
+	obsidian_recording = state;
+	
+}
+
+obsidian_final_render obsidian_render(void) {
+	obsidian_final_render render = {
+		.width = obsidian.width,
+		.height = obsidian.height,
+		.fps = obsidian.fps,
+		.frames = recorder.frame_count
+		
+	};
+	
+	int frame_bytes = obsidian.width * obsidian.height * 3;
+	
+	obsidian_record(FALSE);
+	
+	gl_init(0);
+	gl_clear_colour(obsidian.clear_colour);
+	gl_set_screen_mode(obsidian.width, obsidian.height);
+	
+	if (obsidian.render_bloom) {
+		gl_enable(GL_BLOOM);
+		gl_bloom_radius(obsidian.bloom_radius);
+		
+	} if (obsidian.render_billboards) {
+		gl_enable(GL_BILLBOARDS);
+		gl_billboard_alpha(127);
+		gl_billboard_size(300 / (800.0 / obsidian.width));
+		
+	}
+	
+	obsidian_frame current_frame;
+	obsidian_command current_command;
+	
+	int f;
+	int c;
+	for (f = 0; f < recorder.frame_count; f++) {
+		current_frame = recorder.frames[f];
+		camera = current_frame.camera;
+		
+		for (c = 0; c < current_frame.command_count; c++) {
+			current_command = current_frame.commands[c];
+			
+			if (current_command.command == OBSIDIAN_COMMAND_ADD_POINT) {
+				gl_point(current_command.position, current_command.colour);
+				
+			} else if (current_command.command == OBSIDIAN_COMMAND_EDIT_POINT) {
+				gl_edit_point(current_command.id, current_command.position, current_command.colour);
+				
+			}
+			
+		}
+		
+		gl_render();
+		gl_display();
+		
+		render.video[f] = (uint8*) kmalloc(frame_bytes);
+		memcpy(render.video[f], screen, frame_bytes);
+		
+	}
+	
+	gl_destroy();
+	return render;
+	
+}
+
+void obsidian_loop(void) {
+	memcpy(recorder.frames[recorder.frame_count].commands, command_stack, command_count);
+	recorder.frame_count++;
+	command_count = 0;
+	
+}
+
+void gl_set_screen_mode(uint32 _width, uint32 _height) {
+	if (width != 0 || height != 0) {
+		kfree(screen, width * height * 3);
+		
+	}
+	
+	width = _width;
+	height = _height;
 	
 	cx = width / 2;
 	cy = height / 2;
+	
+	screen = (uint8*) kmalloc(width * height * 3);
+	
+}
+
+void gl_init(int bytes) { // one point is 12 bytes
+	gl_set_screen_mode(GFX_get_mode_info('w'), GFX_get_mode_info('h'));
 	
 	allocated_bytes = bytes;
 	//points = (gl_point_t*) kmalloc(bytes);
@@ -78,7 +191,6 @@ void gl_init(int bytes) { // one point is 12 bytes
 	gl_update_camera(gl_pos(0, 0, -5), gl_rot(0, 0));
 	gl_fov(cx);
 	
-	screen = (uint8*) kmalloc(width * height * 3);
 	clear_colour = 0x00000000;
 	
 	render_points = TRUE;
@@ -100,11 +212,20 @@ void gl_init(int bytes) { // one point is 12 bytes
 	billboard_size = 300;
 	billboard_alpha = 255;
 	
+	if (obsidian_recording) {
+		command_count = 0;
+		timer_phase(obsidian.fps);
+		obsidian_pid = pit_add_process(obsidian_loop);
+		
+	}
+	
 }
 
 void gl_destroy(void) {
 	kfree(screen, width * height * 3);
 	//kfree(points, allocated_bytes);
+	
+	pit_remove_process(obsidian_pid);
 	
 }
 
@@ -210,6 +331,15 @@ int gl_point(gl_pos_t pos, gl_colour_t colour) {
 	point.pos = pos;
 	point.colour = colour;
 	
+	if (obsidian_recording) {
+		command_stack[command_count].command = OBSIDIAN_COMMAND_ADD_POINT;
+		command_stack[command_count].id = point_count;
+		command_stack[command_count].position = pos;
+		command_stack[command_count].colour = colour;
+		command_count++;
+		
+	}
+	
 	points[point_count] = point;
 	point_count++;
 	
@@ -218,6 +348,15 @@ int gl_point(gl_pos_t pos, gl_colour_t colour) {
 }
 
 void gl_edit_point(int id, gl_pos_t pos, gl_colour_t colour) {
+	if (obsidian_recording) {
+		command_stack[command_count].command = OBSIDIAN_COMMAND_EDIT_POINT;
+		command_stack[command_count].id = id;
+		command_stack[command_count].position = pos;
+		command_stack[command_count].colour = colour;
+		command_count++;
+		
+	}
+	
 	points[id].pos = pos;
 	points[id].colour = colour;
 	
@@ -332,6 +471,7 @@ void gl_render_alpha(void) {
 	uint32 fy;
 	
 	uint32 s;
+	boolean on_screen;
 	
 	//gl_point_t* new_points = points;
 	
@@ -358,12 +498,12 @@ void gl_render_alpha(void) {
 		v.y = points[p].pos.y;
 		v.z = points[p].pos.z;
 		
-		if (v.z > camera.pos.z) {
+		if (on_screen) {
 			v.x -= camera.pos.x;
 			v.y -= camera.pos.y;
 			v.z -= camera.pos.z;
 			
-			/*_2d.x = v.x;
+			_2d.x = v.x;
 			_2d.y = v.z;
 			r = gl_rotate_2d(_2d, camera.rot.y);
 			
@@ -375,7 +515,7 @@ void gl_render_alpha(void) {
 			r = gl_rotate_2d(_2d, camera.rot.x);
 			
 			v.y = r.x;
-			v.z = r.y;*/
+			v.z = r.y;
 			
 			f = camera.fov / v.z;
 			

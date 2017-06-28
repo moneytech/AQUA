@@ -33,9 +33,10 @@ static boolean irq = FALSE;
 
 void keyboard_handler(struct registers* r) {
 	uint8 scancode;
+	outportb(0x20, 0x20);
 	scancode = inportb(0x60);
 	
-	if (scancode & 0x80) release = scancode;
+	if ((scancode & 128) == 128) release = scancode - 128;
 	else press = scancode;
 	
 }

@@ -28,11 +28,13 @@
 	#include "../types.h"
 	#include "../trig_tables/cos.h"
 	#include "../trig_tables/sin.h"
+	#include "../trig_tables/tan.h"
 	
 	#define RAND_MAX 32768
 	
 	#define PI 3.14159265
 	#define E 2.71828182
+	#define DEG_TO_RAD 360.0 * PI
 	
 	#define _2PI 2.0 * PI
 	#define PID2 PI / 2.0
@@ -67,9 +69,10 @@
 	int exp(int x);
 	
 	int average(int length, int array[length]);
-	
 	float fmod(float x, float y);
+	
 	float cos(float x);
 	float sin(float x);
+	float tan(float x);
 	
 #endif

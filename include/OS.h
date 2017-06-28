@@ -13,16 +13,22 @@
 	#include "utils/utils.h"
 	#include "utils/string.h"
 	
+	#include "cpu/fpu.h"
+	
 	#include "system/gdt.h"
 	#include "system/system.h"
+	#include "system/syscalls.h"
 	
 	#include "memory/memory.h"
 	#include "memory/paging.h"
+	
+	#include "html/parser.h"
 	
 	#include "graphics/UI.h"
 	#include "graphics/GFX.h"
 	#include "graphics/aqua3d.h"
 	
+	#include "graphics/aqua3d/main.h"
 	#include "graphics/effects/graphics_blurring.h"
 	
 	#include "interrupts/isr.h"
@@ -41,6 +47,8 @@
 	#include "user/app_launcher.h"
 	
 	#include "user/interpreters/basic_interpreter.h"
+	
+	#include "networking/network_wrapper.h"
 	
 	#include "drivers/PIT_driver.h"
 	#include "drivers/ATA_driver.h"

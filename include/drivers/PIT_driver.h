@@ -33,6 +33,9 @@
 	#include "../user/sleep.h"
 	#include "../user/cursor_task.h"
 	
+	int pit_add_process(void (*process) (void));
+	void pit_remove_process(int id);
+	
 	void timer_handler(struct registers* r);
 	void reset_timer(void);
 	

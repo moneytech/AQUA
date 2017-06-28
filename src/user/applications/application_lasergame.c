@@ -38,9 +38,11 @@ void launch_application_lasergame(void) {
 	uint8 cb = 0;
 	
 	int g = rand_int(0, 2);
-	int stars = rand_int(5000, 10000);
+	int stars = 10;//rand_int(5000, 10000);
 	
+	obsidian_record(TRUE);
 	gl_init(12 * stars + 128);
+	GFX_wash_hex(0x00FF00FF);
 	gl_clear_colour(0x00000000);
 	
 	gl_enable(GL_BILLBOARDS);
@@ -105,10 +107,10 @@ void launch_application_lasergame(void) {
 	boolean lost = FALSE;
 	
 	while (TRUE) {
-		/*update_mouse_cursor();
-		rot.x = (get_mouse_y() - 300) / 2;
-		rot.y = -(get_mouse_x() - 400) / 2;
-		*/
+		//update_mouse_cursor();
+		//rot.y = (get_mouse_y() - 300) / 2;
+		//rot.x = -(get_mouse_x() - 400) / 2;
+		
 		poll = poll_key();
 		letter = get_letter_from_map(poll, FALSE);
 		
@@ -194,6 +196,15 @@ void launch_application_lasergame(void) {
 		}
 		
 		gl_display();
+		
+	}
+	
+	gl_destroy();
+	obsidian_final_render video = obsidian_render();
+	
+	int f;
+	for (f = 0; f < video.frames; f++) {
+		GFX_blit_image(0, 0, video.width, video.height, video.video[f]);
 		
 	}
 	

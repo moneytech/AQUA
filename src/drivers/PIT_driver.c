@@ -24,6 +24,11 @@
 
 #include "PIT_driver.h"
 
+void* process_functions[8] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	
+};
+
 static int timer_ticks;
 
 static boolean buffer_blit = TRUE;
@@ -36,6 +41,26 @@ static uint8 mr;
 
 static uint32 width;
 static uint32 height;
+
+int pit_add_process(void (*process) (void)) {
+	int p;
+	for (p = 0; p < 8; p++) {
+		if (process_functions[p] == FALSE) {
+			process_functions[p] = process;
+			return p;
+			
+		}
+		
+	}
+	
+	return -1;
+	
+}
+
+void pit_remove_process(int id) {
+	process_functions[id] = 0;
+	
+}
 
 void timer_handler(struct registers* r) {
 	timer_ticks++;
@@ -60,6 +85,19 @@ void timer_handler(struct registers* r) {
 	if (buffer_blit) {
 		GFX_update_framebuffer();
 		update_mouse_cursor();
+		
+	}
+	
+	void (*function) (void);
+	
+	int p;
+	for (p = 0; p < 8; p++) {
+		function = process_functions[p];
+		
+		if (function) {
+			function();
+			
+		}
 		
 	}
 	

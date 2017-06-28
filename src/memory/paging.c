@@ -24,15 +24,15 @@
 
 #include "paging.h"
 
-extern long kstart;
-extern long kend;
+extern long krnlstart;
+extern long __end;
 extern void load_page_dir(uint32*);
 
 uint32 page_directory[1024] __attribute__((aligned(4096)));
 uint32 exec_page_table[1024] __attribute__((aligned(4096)));
 
 #define kernel_start_phys = &krnlstart - HIGHER_HALF
-#define kernel_end_phys = &krnlend - HIGHER_HALF
+#define kernel_end_phys = &__end - HIGHER_HALF
 
 extern uint32 boot_page_directory;
 

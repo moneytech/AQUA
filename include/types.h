@@ -50,10 +50,10 @@
 	typedef signed int* intptr;
 	typedef unsigned int* uintptr_t;
 	typedef uint16 size;
-	typedef uint64 vaddr;
+	typedef uint32 vaddr;
 	
-	extern uint32 krnlstart;
-	extern uint32 krnlend;
+	//extern uint32 krnlstart;
+	//extern uint32 krnlend;
 	
 	#define low_16(address) (uint16) ((address) & 0xFFFF)            
 	#define high_16(address) (uint16) (((address) >> 16) & 0xFFFF)

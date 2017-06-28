@@ -129,7 +129,8 @@ int average(int length, int array[length]) {
 }
 
 float fmod(float x, float y) {
-	return (x - y * floor(x / y));
+	if (x < y) return x;
+	else return (x - y * floor(x / y));
 	
 }
 
@@ -147,37 +148,42 @@ float sin(float x) {
 }*/
 
 float sin(float x) {
-	/*if (x > 0) x = fmod((x + PI), (_2PI) - PI);
-	else x = fmod((x - PI), (_2PI) + PI);
+	x = fabs(x);
+	x = fmod(x, 360.0f);
 	
-	if (x > 0) return _4DPI * x + _M4DPISQ * x * x;
-	else return _4DPI * x - _M4DPISQ * x * x;*/
-	
-	x += 180;
 	int flx = floor(x);
 	
 	float c1 = table_sin[flx];
 	float c2 = table_sin[flx + 1];
 	
-	return c1 + ((c2 - c1) / (1 / (x - flx)));
+	return c1 + ((c2 - c1) * (x - flx));
 	
 }
 
 float cos(float x) {
-	/*x = PID2 - x;
+	//x *= DEG_TO_RAD;
 	
-	if (x > 0) x = fmod((x + PI), (_2PI) - PI);
-	else x = fmod((x - PI), (_2PI) + PI);
+	x = fabs(x);
+	x = fmod(x, 360.0f);
 	
-	if (x > 0) return _4DPI * x + _M4DPISQ * x * x;
-	else return _4DPI * x - _M4DPISQ * x * x;*/
-	
-	x += 180;
 	int flx = floor(x);
 	
 	float c1 = table_cos[flx];
 	float c2 = table_cos[flx + 1];
 	
-	return c1 + ((c2 - c1) / (1 / (x - flx)));
+	return c1 + ((c2 - c1) * (x - flx));
+	
+}
+
+float tan(float x) {
+	x = fabs(x);
+	x = fmod(x, 360.0f);
+	
+	int flx = floor(x);
+	
+	float c1 = table_tan[flx];
+	float c2 = table_tan[flx + 1];
+	
+	return c1 + ((c2 - c1) * (x - flx));
 	
 }

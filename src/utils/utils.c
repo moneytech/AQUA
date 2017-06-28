@@ -25,13 +25,18 @@
 #include "utils.h"
 
 string itoa(int val) {
+	int len = 0;
+	string result;
+	
 	if (val == 0) {
 		return "0";
 		
+	} if (val < 0) {
+		val = -val;
+		//result[0] = '-';
+		//len = 1;
+		
 	}
-	
-	string result;
-	int len = 0;
 	
 	for (; val > 0; ++len) {
 		result[len] = val % 10 + '0';
