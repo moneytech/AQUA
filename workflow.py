@@ -17,7 +17,7 @@ def maintain():
 	os.system("find asm/ -type f -exec sed -i 's/Copyright\ %d\ Obiwac/Copyright\ %d\ Obiwac/g' {} +"%(datetime.datetime.now().year - 1, datetime.datetime.now().year))
 	os.system("find build/ -type f -exec sed -i 's/Copyright\ %d\ Obiwac/Copyright\ %d\ Obiwac/g' {} +"%(datetime.datetime.now().year - 1, datetime.datetime.now().year))
 	
-	version = float(open("version.txt").read())
+	version = float(open("version.ver").read())
 	os.system("find build/ -type f -exec sed -i 's/%g\"\ #\ dont\ forget\ to\ change\ the\ version\ number/%g\"\ #\ dont\ forget\ to\ change\ the\ version\ number/g' {} +"%(version - 0.1, version))
 	
 	os.system("find asm/ -type f -exec sed -i 's/1;MARKER_TEXT_OR_VIDEO_MODE_SWITCH/0;MARKER_TEXT_OR_VIDEO_MODE_SWITCH/g' {} +")
@@ -31,10 +31,10 @@ while True:
 	
 	if command == "update": update()
 	elif command == "maintain": maintain()
-	elif command == "version": os.system("cat version.txt")
+	elif command == "version": os.system("cat version.ver")
 	
 	elif command == "set version":
-		os.system("echo %s > version.txt"%(raw_input("Enter your new version name: ")))
+		os.system("echo %s > version.ver"%(raw_input("Enter your new version name: ")))
 		maintain()
 	
 	elif command in ["setup", "geany"]:
