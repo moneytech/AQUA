@@ -720,7 +720,7 @@ void OS_run(\
 	
 	entries_list[0].amount = 2;
 	entries_list[1].amount = 2;
-	entries_list[2].amount = 2;
+	entries_list[2].amount = 3;
 	entries_list[3].amount = 2;
 	
 	//entries_list[0].entries[0].name = "Utilities";
@@ -739,6 +739,8 @@ void OS_run(\
 	entries_list[2].entries[0].colour = 0x00FFFFFF;
 	entries_list[2].entries[1].name = "Log";
 	entries_list[2].entries[1].colour = 0x00FFFFFF;
+	entries_list[2].entries[2].name = "Specifications";
+	entries_list[2].entries[2].colour = 0x00FFFFFF;
 	
 	entries_list[3].entries[0].name = "My notepad";
 	entries_list[3].entries[0].colour = 0x00FFFFFF;

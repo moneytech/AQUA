@@ -30,6 +30,8 @@
 	
 	#include "../utils/time.h"
 	#include "../utils/string.h"
+	
+	#include "../specs/theme.h"
 	#include "../universal/lang.h"
 	
 	#include "../user/cursor_task.h"

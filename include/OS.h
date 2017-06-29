@@ -36,6 +36,7 @@
 	#include "interrupts/pic.h"
 	#include "interrupts/irq.h"
 	
+	#include "specs/theme.h"
 	#include "specs/settings.h"
 	#include "specs/RAM_count.h"
 	

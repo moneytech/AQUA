@@ -58,7 +58,7 @@ while True:
 		maintain()
 	
 	elif command in ["setup", "geany"]:
-		if os.system("geany include/types.h") == 0: print("Geany enviroment setup with success.")
+		if os.system("geany include/types.h &") == 0: print("Geany enviroment setup with success.")
 		else: print("An error occured whilst setting up the Geany enviroment.")
 	
 	elif command == "commit":
@@ -202,7 +202,7 @@ while True:
 void launch_%s(void) {
 	%s
 	
-}"""%(name, datetime.datetime.now().year, name, name))
+}"""%(name, datetime.datetime.now().year, name, name, deps))
 		
 		else:
 			_file.write("""/*
@@ -233,36 +233,36 @@ void launch_%s(void) {
 
 		_file.close()
 		
-		os.system("geany src/%s/%s.c"%(path, name))
-		os.system("geany include/%s/%s.h"%(path, name))
-		os.system("geany Makefile")
+		os.system("geany src/%s/%s.c &"%(path, name))
+		os.system("geany include/%s/%s.h &"%(path, name))
+		os.system("geany Makefile &")
 		
 		if _type == "app":
-			os.system("geany src/user/app_launcher.c")
-			os.system("gaeny src/OS.c")
+			os.system("geany src/user/app_launcher.c &")
+			os.system("geany src/OS.c &")
 		
 		else:
-			os.system("gaeny include/OS.h")
+			os.system("geany include/OS.h &")
 	
 	elif command == "open":
 		_type = raw_input("What file type do you want to open? ")
 		name = raw_input("What's the file name? ")
 		
 		if _type in ["driver", "drv"]:
-			os.system("geany src/drivers/%s_driver.c"%(name))
-			os.system("geany include/drivers/%s_driver.h"%(name))
+			os.system("geany src/drivers/%s_driver.c &"%(name))
+			os.system("geany include/drivers/%s_driver.h &"%(name))
 		
 		elif _type in ["c", "src", "source"]:
 			os.system("geany src/%s.c"%(name))
 		
 		elif _type in ["h", "header", "inc", "include"]:
-			os.system("geany include/%s.h"%(name))
+			os.system("geany include/%s.h &"%(name))
 		
 		elif _type in ["asm", "assembly"]:
-			os.system("geany asm/%s.asm"%(name))
+			os.system("geany asm/%s.asm &"%(name))
 		
 		else:
-			os.system("geany %s"%(name))
+			os.system("geany %s &"%(name))
 	
 	elif command == "release":
 		if not raw_input("Are you sure you updated the version number? ") == "":

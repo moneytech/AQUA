@@ -61,6 +61,7 @@ OBJS = \
 	obj/universal/lang.o \
 	obj/universal/key_map.o \
 	\
+	obj/specs/theme.o \
 	obj/specs/settings.o \
 	obj/specs/RAM_count.o \
 	\
@@ -121,6 +122,7 @@ OBJS = \
 	obj/user/applications/application_ant.o \
 	\
 	obj/user/applications/application_log.o \
+	obj/user/applications/application_specs.o \
 	obj/user/applications/application_about.o \
 	\
 	obj/user/applications/application_my_notes.o \

@@ -94,7 +94,7 @@ void UI_turn_off(void) {
 	uint8 a;
 	for (a = 0; a < 255; a += 5) {
 		double_buffer = GFX_blit_image_to_ptr8(double_buffer, width, 0, 0, width, height, double_buffer_trace);
-		double_buffer = GFX_fill_rect_hex_to_ptr8_wa(double_buffer, width, 0, 0, width, height, 0x00000000, a);
+		double_buffer = GFX_fill_rect_hex_to_ptr8_wa(double_buffer, width, 0, 0, width, height, theme_background_colour, a);
 		GFX_blit_image(0, 0, width, height, double_buffer);
 		
 	}
@@ -119,8 +119,8 @@ string UI_entry(uint16 _fdl, uint8 _font_data[94][_fdl], string text, uint8* ico
 	dialog_trace = GFX_compile_section_to_ptr8(dialog_trace, 0, y, width, DIALOG_HEIGHT);
 	dialog = GFX_compile_section_to_ptr8(dialog, 0, y, width, DIALOG_HEIGHT);
 	
-	dialog = GFX_fill_rect_hex_to_ptr8_wa(dialog, width, 0, 0, width, DIALOG_HEIGHT, 0x00000000, DIALOG_ALPHA);
-	dialog = GFX_blit_text_hex_to_ptr8(dialog, width, 10, 4, 0, fdl, _font_data, text, 0x00FFFFFF);
+	dialog = GFX_fill_rect_hex_to_ptr8_wa(dialog, width, 0, 0, width, DIALOG_HEIGHT, theme_background_colour, DIALOG_ALPHA);
+	dialog = GFX_blit_text_hex_to_ptr8(dialog, width, 10, 4, 0, fdl, _font_data, text, theme_text_colour);
 	
 	dialog = GFX_blit_icon_hex_to_ptr8(dialog, width, width - 30, (DIALOG_HEIGHT / 2) + 10, 20, 20, icon_data, icon_colour);
 	
@@ -179,7 +179,7 @@ string UI_entry(uint16 _fdl, uint8 _font_data[94][_fdl], string text, uint8* ico
 				}
 				
 				dialog_with_text = GFX_blit_image_to_ptr8(dialog_with_text, width, 0, 0, width, DIALOG_HEIGHT, dialog_final);
-				dialog_with_text = GFX_blit_text_hex_to_ptr8(dialog_with_text, width, 10, (DIALOG_HEIGHT / 2) + 10, 0, fdl, _font_data, result, 0x00FFFFFF);
+				dialog_with_text = GFX_blit_text_hex_to_ptr8(dialog_with_text, width, 10, (DIALOG_HEIGHT / 2) + 10, 0, fdl, _font_data, result, theme_text_colour);
 				GFX_blit_image(0, y, width, DIALOG_HEIGHT, dialog_with_text);
 				
 				shift = FALSE;
@@ -192,7 +192,7 @@ string UI_entry(uint16 _fdl, uint8 _font_data[94][_fdl], string text, uint8* ico
 	
 	kfree(dialog_with_text, dialog_buffer_size);
 	
-	dialog = GFX_blit_text_hex_to_ptr8(dialog, width, 10, (DIALOG_HEIGHT / 2) + 10, 10, fdl, _font_data, result, 0x00FFFFFF);
+	dialog = GFX_blit_text_hex_to_ptr8(dialog, width, 10, (DIALOG_HEIGHT / 2) + 10, 10, fdl, _font_data, result, theme_text_colour);
 	hide_cursor();
 	
 	for (a = 0; a < 255; a += ANIMATION_STEP) {
@@ -239,8 +239,8 @@ boolean UI_dialog(uint16 _fdl, uint8 _font_data[94][_fdl], string text, uint8 ic
 	dialog_trace = GFX_compile_section_to_ptr8(dialog_trace, 0, y, DIALOG_MAX_WIDTH, DIALOG_HEIGHT);
 	dialog = GFX_compile_section_to_ptr8(dialog, 0, y, DIALOG_MAX_WIDTH, DIALOG_HEIGHT);
 	
-	dialog = GFX_fill_rect_hex_to_ptr8_wa(dialog, DIALOG_MAX_WIDTH, rx, 0, dw, DIALOG_HEIGHT, 0x00000000, DIALOG_ALPHA);
-	dialog = GFX_blit_text_hex_to_ptr8(dialog, DIALOG_MAX_WIDTH, (DIALOG_MAX_WIDTH / 2) - (tpl / 2), 4, 0, fdl, _font_data, text, 0x00FFFFFF);
+	dialog = GFX_fill_rect_hex_to_ptr8_wa(dialog, DIALOG_MAX_WIDTH, rx, 0, dw, DIALOG_HEIGHT, theme_background_colour, DIALOG_ALPHA);
+	dialog = GFX_blit_text_hex_to_ptr8(dialog, DIALOG_MAX_WIDTH, (DIALOG_MAX_WIDTH / 2) - (tpl / 2), 4, 0, fdl, _font_data, text, theme_text_colour);
 	
 	dialog = GFX_blit_icon_hex_to_ptr8(dialog, DIALOG_MAX_WIDTH, (DIALOG_MAX_WIDTH / 2) - 120, (DIALOG_HEIGHT / 2) + 10, 20, 20, icon_data0, icon_colour0);
 	dialog = GFX_blit_icon_hex_to_ptr8(dialog, DIALOG_MAX_WIDTH, (DIALOG_MAX_WIDTH / 2) + 100, (DIALOG_HEIGHT / 2) + 10, 20, 20, icon_data1, icon_colour1);
@@ -440,7 +440,7 @@ static uint8* UI_blit_slide_down_to_ptr8(uint8* surf, uint16 _fdl, uint8 _font_d
 	
 	if (after) y = (int) ((float) h / (s + 1.0f));
 	else y = h - ((int) ((float) h / (s + 1.0f)));
-	surf = GFX_fill_rect_hex_to_ptr8_wa(surf, w, 0, 0, w, y, 0x00000000, DIALOG_ALPHA);
+	surf = GFX_fill_rect_hex_to_ptr8_wa(surf, w, 0, 0, w, y, theme_background_colour, DIALOG_ALPHA);
 	
 	int e;
 	for (e = 0; e < entry_count; e++) {
