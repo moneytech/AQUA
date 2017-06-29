@@ -22,9 +22,11 @@
  */
 
 
+// Special thanks to http://blog.ivank.net/fastest-gaussian-blur.html
+
 #include "graphics_blurring.h"
 
-uint8* blur(uint8* surface, uint32 width, uint32 height, uint8 radius) {
+/*uint8* blur(uint8* surface, uint32 width, uint32 height, uint8 radius) {
 	uint8* where = surface;
 	
 	uint8* source = (uint8*) kmalloc(width * height * 3);
@@ -72,6 +74,139 @@ uint8* blur(uint8* surface, uint32 width, uint32 height, uint8 radius) {
 	}
 	
 	kfree(source, width * height * 3);
+	return surface;
+	
+}*/
+
+static int* boxes_for_gaussian(float sigma, int n) {
+	float w_ideal = sqrt((12 * sigma * sigma / n) + 1);
+	int wl = floor(w_ideal);
+	
+	if (wl % 2 == 0) wl--;
+	
+	int wu = wl + 2;
+	float m_ideal = (12 * sigma * sigma - n * wl * wl - 4 * n * wl - 3 * n) / (-4 * wl - 4);
+	int m = round(m_ideal);
+	
+	int sizes[n];
+	int i;
+	for (i = 0; i < n; i++) {
+		sizes[i] = i < m ? wl : wu;
+		
+	}
+	
+	return (int*) sizes;
+	
+}
+
+static uint8* box_blur_H_4(uint8* scl, uint32 w, uint32 h, uint8 r) {
+	uint8* tcl = (uint8*) kmalloc(w * h);
+	memcpy(tcl, scl, w * h);
+	
+	float iarr = 1.0 / (r + r + 1);
+	
+	int i;
+	int j;
+	for (i = 0; i < h; i++) {
+		int ti = i * w;
+		int li = ti;
+		int ri = ti + r;
+		
+		int fv = scl[ti];
+		int lv = scl[ti + w - 1];
+		int val = (r + 1) * fv;
+		
+		for (j = 0; j < r; j++) { val += scl[ti + j]; } 
+		for (j = 0; j <= r; j++) { val += scl[ri++] - fv; tcl[ti++] = round(val * iarr); } 
+		for (j = r + 1; j < w - r; j++) { val += scl[ri++] - scl[li++]; tcl[ti++] = round(val * iarr); } 
+		for (j = w - r; j < w; j++) { val += lv - scl[li++]; tcl[ti++] = round(val * iarr); } 
+		
+	}
+	
+	memcpy(scl, tcl, w * h);
+	kfree(tcl, w * h);
+	
+	return scl;
+	
+}
+
+static uint8* box_blur_T_4(uint8* scl, uint32 w, uint32 h, uint8 r) {
+	uint8* tcl = (uint8*) kmalloc(w * h);
+	memcpy(tcl, scl, w * h);
+	
+	float iarr = 1.0 / (r + r + 1);
+	
+	int i;
+	int j;
+	for (i = 0; i < w; i++) {
+		int ti = i;
+		int li = ti;
+		int ri = ti + r * w;
+		
+		int fv = scl[ti];
+		int lv = scl[ti + w * (h - 1)];
+		int val = (r + 1) * fv;
+		
+		for (j = 0; j < r; j++) { val += scl[ti + j * w]; } 
+		for (j = 0; j <= r; j++) { val += scl[ri] - fv; tcl[ti] = round(val * iarr); ri += w; ti += w; } 
+		for (j = r + 1; j < h - r; j++) { val += scl[ri] - scl[li]; tcl[ti] = round(val * iarr); li += w; ri += w; ti += w; } 
+		for (j = h - r; j < h; j++) { val += lv - scl[li]; tcl[ti] = round(val * iarr); li += w; ti += w; } 
+		
+	}
+	
+	memcpy(scl, tcl, w * h);
+	kfree(tcl, w * h);
+	
+	return scl;
+	
+}
+
+static uint8* box_blur_4(uint8* surface, uint32 width, uint32 height, uint8 radius) {
+	surface = box_blur_H_4(surface, width, height, radius);
+	surface = box_blur_T_4(surface, width, height, radius);
+	
+	return surface;
+	
+}
+
+uint8* gaussian_blur_4(uint8* surface, uint32 width, uint32 height, uint8 radius) {
+	int* boxes = boxes_for_gaussian(radius, 3);
+	surface = box_blur_4(surface, width, height, (boxes[0] - 1) / 2);
+	surface = box_blur_4(surface, width, height, (boxes[1] - 1) / 2);
+	surface = box_blur_4(surface, width, height, (boxes[2] - 1) / 2);
+	
+	return surface;
+	
+}
+
+uint8* blur(uint8* surface, uint32 width, uint32 height, uint8 radius) {
+	uint8* red = (uint8*) kmalloc(width * height);
+	uint8* green = (uint8*) kmalloc(width * height);
+	uint8* blue = (uint8*) kmalloc(width * height);
+	
+	int p;
+	for (p = 0; p < width * height * 3; p += 3) {
+		red[p / 3] = surface[p];
+		green[p / 3] = surface[p + 1];
+		blue[p / 3] = surface[p + 2];
+		
+	}
+	
+	red = gaussian_blur_4(red, width, height, radius);
+	green = gaussian_blur_4(green, width, height, radius);
+	blue = gaussian_blur_4(blue, width, height, radius);
+	
+	for (p = 0; p < width * height * 3; p += 3) {
+		surface[p] = red[p / 3];
+		surface[p + 1] = green[p / 3];
+		surface[p + 2] = green[p / 3];
+		
+	}
+	
+	kfree(red, width * height);
+	kfree(green, width * height);
+	kfree(blue, width * height);
+	
 	return surface;
 	
 }

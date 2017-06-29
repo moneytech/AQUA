@@ -5,6 +5,7 @@
 #misc
 *.log
 *.txt
+*.py
 
 # binaries
 *.o

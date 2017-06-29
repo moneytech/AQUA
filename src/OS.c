@@ -539,7 +539,6 @@ void OS_run(\
 	page = html_render_page(page);
 	html_display_page(0, 0, page);
 	*/
-	sleep(50);
 	
 	//launch_application_lasergame();
 	

@@ -29,6 +29,8 @@
 	#include "../../utils/math.h"
 	#include "../../memory/memory.h"
 	
+	//uint8* box_blur_4(uint8* surface, uint32 width, uint32 height, uint8 radius);
+	uint8* gaussian_blur_4(uint8* surface, uint32 width, uint32 height, uint8 radius);
 	uint8* blur(uint8* surface, uint32 width, uint32 height, uint8 radius);
 	
 	uint8* perfect_gaussian(uint8* surface, uint32 width, uint32 height, uint8 radius);
