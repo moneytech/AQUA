@@ -531,8 +531,8 @@ void OS_run(\
 		\
 	);
 	
-	#include "left_game.h"
-	left_game();
+	//#include "left_game.h"
+	//left_game();
 	
 	/*html_page page = html_new_page(800, 600);
 	page = html_parse_code(page, "<html><head><title>WEBPAGE</title></head><body><h1>Header</h1><p>This is just a paragraph <b>bold</b> <u>underlined</u></p></body></html>");

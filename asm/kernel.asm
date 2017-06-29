@@ -51,7 +51,7 @@ section .text
 	dd 0
 	dd 0
 
-	dd 0;0
+	dd 0;MARKER_TEXT_OR_VIDEO_MODE_SWITCH
 	dd 800;800
 	dd 600;600
 	dd 32;32

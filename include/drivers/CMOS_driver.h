@@ -31,7 +31,7 @@
 	#define CMOS_PORT_ADDRESS 0x70
 	#define CMOS_PORT_DATA 0x71
 	
-	#define CURRENT_YEAR 2017 /// !!!: Change this every year
+	#define CURRENT_YEAR 2017 /// !!! Change this every year
 	
 	int CMOS_get_update_in_progress_flag(void);
 	uint8 CMOS_get_RTC_register(int reg);
