@@ -28,7 +28,7 @@ VERSION = "AQUA OS"
 
 CFLAGS = -m32 -c -ffreestanding
 ASMFLAGS = -f elf32
-LDFLAGS = -m elf_i386 -T build/link.ld
+LDFLAGS = -m elf_i386 -T construct/link.ld
 
 EMULATOR = qemu-system-i386
 EMULATOR_FLAGS = -kernel
@@ -144,7 +144,7 @@ OUTPUT = aqua/boot/kernel.bin
 _run: _all
 	$(EMULATOR) $(EMULATOR_FLAGS) $(OUTPUT)
 
-_iso: _build
+_iso: _construct
 	(killall virtualbox && sleep 1) || true
 	virtualbox --startvm $(VERSION)
 	
@@ -180,11 +180,11 @@ obj/%.o: final/%.c
 	mkdir -p $(@D)
 	$(COMPILER) $(CFLAGS) -c -o $@ $<
 
-_build: _all
+_construct: _all
 	rm aqua/boot/grub/ -r -f
 	mkdir aqua/boot/grub/
 	
-	cp build/grub.cfg aqua/boot/grub/grub.cfg
+	cp construct/grub.cfg aqua/boot/grub/grub.cfg
 	grub-mkrescue --output=aqua/aqua.iso aqua/
 
 _install: kernel.bin
@@ -214,7 +214,7 @@ iso:
 	make _iso || make _error_target
 
 .PHONY: iso
-build:
+construct:
 	make prepare
-	make _build || make _error_target
+	make _construct || make _error_target
 
