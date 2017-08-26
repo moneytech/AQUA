@@ -33,7 +33,7 @@ void launch_application(string name) {
 	
 	if (str_eql(name, "Log")) launch_application_log();
 	if (str_eql(name, "About")) launch_application_about();
-	if (str_eql(name, "Specifications")) launch_application_specs();
+	if (str_eql(name, "Specifications")) launch_appliction_specs();
 	
 	if (str_eql(name, "My notepad")) launch_application_my_notes();
 	
