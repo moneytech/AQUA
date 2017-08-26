@@ -41,6 +41,6 @@ void launch_appliction_specs(void) {
 	
 	buffer = GFX_blit_image_to_ptr8(old, width, height, 0, 0);
 	buffer = GFX_fill_rect_hex_to_ptr8_wa(buffer, width, 0, 0, width, height, theme_background, 120);
-	buffer = 
+	//buffer = 
 	
 }
