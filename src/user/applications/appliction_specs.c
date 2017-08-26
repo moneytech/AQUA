@@ -25,7 +25,7 @@
 #include "appliction_specs.h"
 
 void launch_appliction_specs(void) {
-	uint8* _api_icon_back = api_get_icon("back")
+	/*uint8* _api_icon_back = api_get_icon("back")
 	uint8** _api_font_aqua_15px = api_get_font("mono", 15)
 	uint8** _api_font_aqua_20px = api_get_font("aqua", 20)
 	uint8** _api_font_aqua_50px = api_get_font("aqua", 50)
@@ -41,6 +41,6 @@ void launch_appliction_specs(void) {
 	
 	buffer = GFX_blit_image_to_ptr8(old, width, height, 0, 0);
 	buffer = GFX_fill_rect_hex_to_ptr8_wa(buffer, width, 0, 0, width, height, theme_background, 120);
-	//buffer = 
+	//buffer = */
 	
 }
