@@ -122,7 +122,7 @@ OBJS = \
 	obj/user/applications/application_ant.o \
 	\
 	obj/user/applications/application_log.o \
-	obj/user/applications/application_specs.o \
+	obj/user/applications/appliction_specs.o \
 	obj/user/applications/application_about.o \
 	\
 	obj/user/applications/application_my_notes.o \
